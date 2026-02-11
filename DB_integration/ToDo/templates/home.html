@@ -3,97 +3,194 @@
 <head>
     <title>To Do App</title>
     <style>
-        body {
-            font-family: Arial;
-            background: #f4f4f4;
-            padding: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
         }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            padding: 40px;
+        }
+
         h1 {
             text-align: center;
+            margin-bottom: 30px;
+            font-size: 36px;
+            color: #ed9543;
+            letter-spacing: 2px;
         }
+
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
         }
-        .list-box {
-            background: white;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 5px gray;
+
+        .card {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.6);
         }
-        button {
-            padding: 5px 10px;
-            background: red;
+
+        h3 {
+            margin-bottom: 15px;
+            color: #ed9543;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input, select {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background-color: #2a2a2a;
             color: white;
+            flex: 1;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        button {
+            padding: 10px 18px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
-            border-radius: 4px;
+            transition: 0.3s;
+            font-weight: 500;
         }
+
         .add-btn {
-            background: green;
+            background-color: #ed9543;
+            color: white;
         }
-        input, select {
-            padding: 5px;
-            margin: 5px 0;
+
+        .add-btn:hover {
+            background-color: #ed9543;
+            transform: translateY(-2px);
         }
+
+        .delete-btn {
+            background-color: #333;
+            color: #ed9543;
+            border: 1px solid #ed9543;
+        }
+
+        .delete-btn:hover {
+            background-color: #ed9543;
+            color: #121212;
+        }
+
+        .list-box {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ed9543;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        li {
+            padding: 10px;
+            background-color: #2a2a2a;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .empty-text {
+            color: #888;
+            margin-top: 10px;
+        }
+
+        hr {
+            margin: 25px 0;
+            border: 1px solid #333;
+        }
+
     </style>
 </head>
 <body>
 
-<h1>To Do List Application</h1>
+<h1>TO DO LIST</h1>
 
 <div class="container">
 
-    <h3>Add New List</h3>
-    <form method="post" action="{% url 'add_list' %}">
-        {% csrf_token %}
-        <input type="text" name="name" placeholder="Enter list name" required>
-        <button class="add-btn">Add List</button>
-    </form>
+    <!-- ADD LIST -->
+    <div class="card">
+        <h3>Add New List</h3>
+        <form method="post" action="{% url 'add_list' %}">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Enter list name..." required>
+            <button class="add-btn">Add List</button>
+        </form>
+    </div>
+
+    <!-- ADD TASK -->
+    <div class="card">
+        <h3>Add New Task</h3>
+        <form method="post" action="{% url 'add_task' %}">
+            {% csrf_token %}
+            <select name="todo_list" required>
+                {% for list in lists %}
+                    <option value="{{ list.id }}">{{ list.name }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="title" placeholder="Enter task..." required>
+            <button class="add-btn">Add Task</button>
+        </form>
+    </div>
 
     <hr>
 
-    <h3>Add New Task</h3>
-    <form method="post" action="{% url 'add_task' %}">
-        {% csrf_token %}
-        <select name="todo_list" required>
-            {% for list in lists %}
-                <option value="{{ list.id }}">{{ list.name }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="title" placeholder="Enter task" required>
-        <button class="add-btn">Add Task</button>
-    </form>
-
-    <hr>
-
-    <h2>Your Lists</h2>
-
+    <!-- DISPLAY LISTS -->
     {% for list in lists %}
         <div class="list-box">
-            <h3>
-                {{ list.name }}
+            <div class="list-header">
+                <h3>{{ list.name }}</h3>
                 <a href="{% url 'delete_list' list.id %}">
-                    <button>Delete List</button>
+                    <button class="delete-btn">Delete List</button>
                 </a>
-            </h3>
+            </div>
 
             <ul>
                 {% for task in list.tasks.all %}
                     <li>
                         {{ task.title }}
                         <a href="{% url 'delete_task' task.id %}">
-                            <button>Delete</button>
+                            <button class="delete-btn">Delete</button>
                         </a>
                     </li>
                 {% empty %}
-                    <li>No tasks yet</li>
+                    <li class="empty-text">No tasks yet</li>
                 {% endfor %}
             </ul>
         </div>
     {% empty %}
-        <p>No lists created yet.</p>
+        <p class="empty-text">No lists created yet.</p>
     {% endfor %}
 
 </div>
