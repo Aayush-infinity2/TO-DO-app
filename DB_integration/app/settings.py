@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'todo',
+    'ToDo',
     
 ]
 
@@ -133,4 +133,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 print("DATABASE BEING USED:", DATABASES['default']['NAME'])
+
 
